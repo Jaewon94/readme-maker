@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+
+    <style>
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background-color: #f0f0f0;
+        }
+        .user-info {
+            font-weight: bold;
+        }
+        .main-content {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <div class="user-info">
+            <span sec:authorize="isAuthenticated()">
+                환영합니다, <span sec:authentication="principal.nickname"></span>님!
+                <a th:href="@{/logout}">로그아웃</a>
+            </span>
+        <span sec:authorize="!isAuthenticated()">
+                <a th:href="@{/login}">로그인</a>
+            </span>
+    </div>
+</div>
+
+    <h1>Welcome to Readme-Maker</h1>
+
+    <a th:href="@{/login}">로그인</a>
+
+    <a th:href="@{/manual/start}">수동작성</a>
+    <a th:href="@{/auto/start}">자동작성</a>
+
+</body>
+</html>
