@@ -15,7 +15,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public void save(UserForm userForm) {
+    public UserForm save(UserForm userForm) {
         // 이메일 중복 검사
         if (userRepository.findByEmail(userForm.getEmail()).isPresent()) {
             throw new UserRegistrationException("이미 사용 중인 이메일입니다.");
@@ -34,5 +34,7 @@ public class UserService {
         User user = new User(userForm);
         user.setPassword(passwordEncoder.encode(userForm.getPassword()));
         userRepository.save(user);
+        return userForm;
     }
+
 }

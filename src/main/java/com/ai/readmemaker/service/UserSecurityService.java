@@ -44,7 +44,7 @@ public class UserSecurityService implements UserDetailsService {
 
         System.out.println("Authorities granted: " + authorities);
 
-        CustomUserDetails customUserDetails = new CustomUserDetails(user.getEmail(), user.getPassword(), user.getNickname(), authorities);
+        CustomUserDetails customUserDetails = new CustomUserDetails(user.getId(), user.getEmail(), user.getPassword(), user.getNickname(), authorities);
         System.out.println("CustomUserDetails created: " + customUserDetails.getEmail());
         System.out.println("customUserDetails.getNickname() = " + customUserDetails.getNickname());
         return customUserDetails;

@@ -15,3 +15,6 @@ spring:
         use_sql_comments: true
         highlight_sql: true
 
+app:
+  jwtSecret: iSPdDmp40rLu/lDDi/01LD0LQekbdtI0Ndaw0F5UhtorV86CsUyBR7plxlF/30jhSiu2HD9sSWh5dd3MMJHCuA==
+  jwtExpirationInMs: 86400000

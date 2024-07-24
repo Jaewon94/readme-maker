@@ -9,6 +9,7 @@ import java.util.Collection;
 
 @Getter
 public class CustomUserDetails implements UserDetails {
+    private Long id;
     private String email;
     private String password;
     private String nickname;
@@ -18,8 +19,9 @@ public class CustomUserDetails implements UserDetails {
     private boolean isCredentialsNonExpired;
     private boolean isEnabled;
 
-    public CustomUserDetails(String email, String password, String nickname,
+    public CustomUserDetails(Long id, String email, String password, String nickname,
                              Collection<? extends GrantedAuthority> authorities) {
+        this.id = id;
         this.email = email;
         this.password = password;
         this.nickname = nickname;

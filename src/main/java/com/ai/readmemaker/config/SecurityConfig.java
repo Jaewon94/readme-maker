@@ -11,6 +11,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -18,45 +19,46 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
     private final UserSecurityService userSecurityService;
+    private final AuthenticationConfiguration authenticationConfiguration;
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+    public AuthenticationManager authenticationManager() throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable()) // Disable CSRF protection
+                .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers("/", "/index").permitAll()
-                        .requestMatchers("/register").permitAll()
+                        .requestMatchers("/", "/index", "/login", "/register", "/api/**").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
-                .formLogin(form -> form
-                        .loginPage("/login")
-                        .defaultSuccessUrl("/index")
-                        .usernameParameter("email") // Use "email" as the username parameter
-                        .failureUrl("/login?error")
-                        .permitAll()
-                )
+                .addFilterBefore(jsonAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
+                .formLogin(formLogin -> formLogin.disable())
                 .logout(logout -> logout
-                        .logoutUrl("/logout") // Custom logout URL if needed
+                        .logoutUrl("/logout")
                         .logoutSuccessUrl("/login?logout")
                         .invalidateHttpSession(true)
                         .deleteCookies("JSESSIONID")
                         .permitAll()
-                )
-
-                .userDetailsService(userSecurityService); // Add this line to set the custom UserDetailsService
+                );
 
         return http.build();
+    }
+
+    @Bean
+    public JsonAuthenticationFilter jsonAuthenticationFilter() throws Exception {
+        JsonAuthenticationFilter filter = new JsonAuthenticationFilter();
+        filter.setAuthenticationManager(authenticationManager());
+        filter.setAuthenticationSuccessHandler(new JsonAuthenticationSuccessHandler());
+        filter.setAuthenticationFailureHandler(new JsonAuthenticationFailureHandler());
+        return filter;
     }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
 }
